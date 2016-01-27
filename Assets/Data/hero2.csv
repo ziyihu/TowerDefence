@@ -1,0 +1,5 @@
+ID,Name,UnitOfType,UnitLevel,ExportName,ExportNameNpc,Speed,Hitpoints,AttackRange,AttackSpeed,Damage,DamageRadius,ActiveSkill,AmplifyDamageBuilding,AmplifyDamageBuildingClass,HousingSpace,BaseLevel,LaboratoryLevel,ResurrectionTime,ResurrectionResource,ResurrectionCost,UpgradeTimeH,UpgradeResource,UpgradeCost,IsFlying,AirTargets,GroundTargets,TID,InfoTID,SWF,IconSWF,IconExportName,BigPicture,Projectile,DeployEffect,AttackEffect,HitEffect,DieEffect,Animation,SpawnIdle,MovementOffsetAmount,MovementOffsetSpeed,DieDamageEffect
+1,bowman,2,1,bowman,bowman,2,300,3,5,10,0,1,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+2,gaint,3,1,gaint,gaint,2.5,100,1.5,10,5,0.5,0,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+3,viking,8,1,viking,viking,2.5,100,1.5,10,5,0.5,0,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+4,bug1,4,1,bug1,bug1,3,100,2,2,5,0.5,0,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
