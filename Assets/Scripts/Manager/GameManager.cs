@@ -15,6 +15,9 @@ public class GameManager : UnityAllSceneSingleton<GameManager>,IMessageObject {
 	public List<Cannon> can = new List<Cannon> ();
 	public List<Tower1> tower1List = new List<Tower1> ();
 	public List<Tower2> tower2List = new List<Tower2> ();
+	public List<Tower4> tower4List = new List<Tower4> ();
+	public List<Tower7> tower7List = new List<Tower7> ();
+	public List<Tower10> tower10List = new List<Tower10>();
 	public CharacterManager cManager;
 	public Status CurStatus = Status.NONE;
 
@@ -68,22 +71,12 @@ public class GameManager : UnityAllSceneSingleton<GameManager>,IMessageObject {
 	}
 
 	void Update(){
-
-//		if (Input.GetKeyDown (KeyCode.A)) {
-//			Vector3 obstacle3Pos = new Vector3 (20f, 1.0f, 19.3f);
-//			Cannon cannon = (Cannon)cManager.SpawnCharacter(CharacterData.CharacterClassType.BUILDING, (int)CharacterData.buildingMode.CANNON, 1,
-//			                                                1, obstacle3Pos, new Vector3 (0, 0, 0), CharacterStatus.Pose.Idle);
-//			cannon.SetPosition (obstacle3Pos);
-//			
-//			//cannon.GetTransform().rotation = Quaternion.Euler(90,-90,0);
-//			can.Add(cannon);
-//		}
 		if (can.Count > 0) {
-						foreach (Cannon c in can) {
-								c.CheckEnemy ();
-								c.HitEnemy ();
-						}
-				}
+			foreach (Cannon c in can) {
+				c.CheckEnemy ();
+				c.HitEnemy ();
+			}
+		}
 		switch (CurStatus) {
 		case Status.LOAD_RESOURCE:
 			break;

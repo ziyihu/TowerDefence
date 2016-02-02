@@ -83,7 +83,7 @@ public class QuadTextureAni : MonoBehaviour
 	}
 	private bool needReverse = false;
 	// Update is called once per frame
-	void Update ()
+	void FixedUpdate ()
 	{
 
 		if (mActive && mSpriteNames.Count > 1 && Application.isPlaying && mFPS > 0f)

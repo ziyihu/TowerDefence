@@ -1,7 +1,13 @@
 ﻿using UnityEngine;
 using System.Collections;
+using System.Collections.Generic;
 
 public class Enemy : Character {
+
+	private float timer = 0;
+	private float showDieTime = 2;
+	private Vector3 diePos;
+	private GameObject dieObj = null;
 
 	public CharacterData.CharacterModel characterType;
 	public Transform GetTransform (){
@@ -51,28 +57,23 @@ public class Enemy : Character {
 		if(model != null){
 		data.life -= damage;
 		if (data.life <= 0) {
-
+			
 			//hide the blood number panel
 			Axis2DTo3D axis = model.GetComponent<Axis2DTo3D> ();
 			axis.SetShow(false);
-
-			//TODO
-			//play die animation
-//			QuadTextureAni ani = GetTransform().GetComponentInChildren<QuadTextureAni> ();
-//			if (ani != null) {
-//				ani.namePrefix = "Deth00";
-//				ani.mFPS = 10;
-//				ani.RebuildSpriteList();
-//				ani.mirror = false;
-//			}
-
 			data.life = 0;
 			status.CurPose = CharacterStatus.Pose.Die;
 			OnDie();
+			//die position
+			diePos = model.transform.position;
 			EnemySpawnManager._instance.enemyList.Remove(this);
-			//show the destory animation
+			
+			//destory the game object
 			GameManager.Instance.DeleteById(ID);
-				return;
+			//create a new game object to show the animation
+			dieObj = (GameObject)GameObject.Instantiate (Resources.Load ("die"));
+			dieObj.transform.position = diePos;
+			return;
 		}
 		if (data.life > 0) {
 				Transform bloodFull = blood.transform.GetChild (1);
@@ -83,7 +84,6 @@ public class Enemy : Character {
 		}
 		}
 	}
-	
 
 
 	public void Start(){

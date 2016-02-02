@@ -1,11 +1,12 @@
 ﻿using UnityEngine;
 using System.Collections;
+using System.Collections.Generic;
 
 public class Tower1 : Building {
 	//Current Enemy
 	public Character curEnemy;
-
-	public int level = 1;
+	public List<Character> enemyLists = new List<Character> ();
+	public int attackPower = 100;
 	
 	float mHitDelta;
 	bool endAttack = true;
@@ -16,43 +17,21 @@ public class Tower1 : Building {
 	float scalefactor = 0.6f;
 	int turnSpeed = 12;
 	Vector3 dirPos;
-	
+	float attackIntervale = 1;
 	float dirRotation;
-	
+	bool isExist;
 	public Tower1(){
 		this.START_METHOD("Tower1");
-		
 		model = (GameObject)GameObject.Instantiate(Resources.Load("tower1"));
 		model.name = "" + ID;
-		
 		status = model.GetComponent<CharacterStatus> ();
 		status.rotateWeapon = true;
 		status.CurPose = CharacterStatus.Pose.None;
-		
-		//set the weapon attack power
-		
-		
 		//get the building
 		Transform house = model.transform.GetChild (0);
 		house.gameObject.GetComponent<Renderer>().sortingOrder = layerOrder = LAYER_BASE + 1;
 		buildingType = CharacterData.buildingMode.TOWER1;
-		//TODO
-		//name, attack number, attack range
-		
 		this.END_METHOD("Tower1");
-	}
-	
-	
-	public override void Start(){
-
-	}
-	
-	public virtual void Update(){
-		base.Update ();
-		//check enemy
-		CheckEnemy ();
-		//hit enemy
-		HitEnemy ();
 	}
 	
 	//attack one time
@@ -75,16 +54,48 @@ public class Tower1 : Building {
 			//get the enemy list
 			if(EnemySpawnManager._instance.enemyList.Count > 0){
 				//attack the enemy
-				curEnemy = EnemySpawnManager._instance.enemyList[0];
+				foreach(Character chara in EnemySpawnManager._instance.enemyList){
+					if(Vector3.Distance(this.GetPos(),chara.GetPos()) < this.GetAttackRange() && chara.Life >= 0){
+						isExist = false;
+						for(int i = 0 ; i < enemyLists.Count; i++) {
+							if(enemyLists[i].ID == chara.ID){
+								isExist = true;
+							}
+						}
+						if(isExist == false){
+							enemyLists.Add(chara);
+						}
+						for(int i = 0;i < enemyLists.Count ; i ++){
+							if(enemyLists[i].Life <= 0){
+								enemyLists.Remove(enemyLists[i]);
+							}
+						}
+					}
+				}
+				if(enemyLists.Count > 0){
+					curEnemy = enemyLists[0];
+				} else if(enemyLists.Count == 0){
+					curEnemy = null;
+					return;
+				}
 				if(curEnemy != null){
-					status.CurPose = CharacterStatus.Pose.Attack;
-					dirPos = this.GetPosition() - curEnemy.GetPos();
-					
+					if (Vector3.Distance (this.GetPos (), curEnemy.GetPos ()) >= this.GetAttackRange ()) {
+						enemyLists.Remove (curEnemy);
+						curEnemy = null;
+					}
+					if(curEnemy!= null){
+						status.CurPose = CharacterStatus.Pose.Attack;
+						dirPos = this.GetPosition() - curEnemy.GetPos();
 					//dir.y = 0;
-					RotateTowards();
-					ChangeDirection();
+						RotateTowards();
+						ChangeDirection();
+				
+					}
 				}
 				lastTime = Time.realtimeSinceStartup;
+			} else if(EnemySpawnManager._instance.enemyList.Count == 0){
+				enemyLists.Clear();
+				curEnemy = null;
 			}
 		}
 	}
@@ -94,9 +105,11 @@ public class Tower1 : Building {
 		if (GameManager.Instance.CurStatus != GameManager.Status.START_GAME) {
 			return;
 		}
-		Debug.Log ("1");
-		if (EnemySpawnManager._instance.enemyList.Count != 0) {
-			curEnemy = EnemySpawnManager._instance.enemyList [0];
+		if(enemyLists.Count > 0){
+			curEnemy = enemyLists[0];
+		} else if(enemyLists.Count == 0){
+			curEnemy = null;
+			return;
 		}
 		if (curEnemy == null) {
 			if(GetTransform()!=null){
@@ -104,8 +117,11 @@ public class Tower1 : Building {
 				status.CurPose = CharacterStatus.Pose.None;
 			}
 			return;
-			
 		} 
+		if(Vector3.Distance(this.GetPos(),curEnemy.GetPos()) >= this.GetAttackRange() || curEnemy.Life <= 0){
+			enemyLists.Remove(curEnemy);
+			curEnemy = null;
+		}
 		//hit enemy
 		HitAnimation ();
 		if (Time.realtimeSinceStartup > lastTime + data.attackInterval) {
@@ -114,50 +130,43 @@ public class Tower1 : Building {
 		}
 	}
 	
-	void HitAnimation()
-	{
-		Debug.Log ("33");
+	void HitAnimation() {
 		if (endAttack||canAttack == false) 
 			return;
 		mHitDelta += RealTime.deltaTime;
 		float rate = 0.5f;
-		
-		if (  rate < mHitDelta) {
-			
+		if (rate < mHitDelta) {
 			mHitDelta = (rate > 0f) ? mHitDelta - rate : 0f;
-			if(curFps >0)
-			{
+			if(curFps >0) {
 				curFps = 0;				
 				GetTransform().GetChild(0).localPosition = new Vector3(0.0f,0.3f,0.0f);	
 				QuadTextureNgui gui = GetTransform().GetChild(0).GetComponent<QuadTextureNgui>();
 				gui.ScaleFactor = 0.5f;
-				
 				endAttack = true;
 				canAttack = false;
-				
-				
-			}
-			else
-			{	
+			} else {	
+				if(curEnemy!= null) {
 				GameObject bulletgo = (GameObject)GameObject.Instantiate(Resources.Load("cannonbullet"));
 				CannonBullet bullet = bulletgo.GetComponent<CannonBullet>();
 				Transform gun =	GetTransform().GetChild(0);
-				
 				bulletgo.transform.position = GetTransform().position+GetTransform().forward * 0.6f;
 				//bulletgo.transform.position = gun.position ;
-				
 				bullet.parent1 = this;
-				
-				if(EnemySpawnManager._instance.enemyList.Count > 0){
-					curEnemy = EnemySpawnManager._instance.enemyList[0];
-					bullet.Fire(curEnemy);
+					if(enemyLists.Count > 0){
+						curEnemy = enemyLists[0];
+						if(curEnemy!=null){
+							bullet.Fire(curEnemy);
+						}
 					Vector3 dir = Vector3.back* moveDistance;
 					GetTransform().GetChild(0).localPosition =new Vector3(dir.x , dir.y + 0.3f, dir.z) ;
 					QuadTextureNgui gui = GetTransform().GetChild(0).GetComponent<QuadTextureNgui>();
 					gui.ScaleFactor = scalefactor; 
 					curFps++;
+				} else if(enemyLists.Count == 0){
+						curEnemy = null;
+						return;
+					}
 				}
-				
 			}
 		}
 	}
@@ -183,16 +192,15 @@ public class Tower1 : Building {
 		//	dirRotation = Vector3.Angle(this.GetPosition(), curEnemy.GetPos ());
 		dirRotation = Vector3.Angle (dirPos, Vector3.right);
 		QuadTextureNgui tex = GetTransform().GetChild(0).GetComponent<QuadTextureNgui>();
-		
 		if(dirRotation >= 0.0f && dirRotation <= 180f){
 			int angle = ((int)(dirRotation /10.0f) * 10);
 			if(angle == 0){
-				tex.mSpriteName = level + "0000";
+				tex.mSpriteName = data.level + "0000";
 			}
 			else if(10 <= angle && angle < 100){
-				tex.mSpriteName = level + "00" + angle;
+				tex.mSpriteName = data.level + "00" + angle;
 			} else {
-				tex.mSpriteName = level + "0" + angle;
+				tex.mSpriteName = data.level + "0" + angle;
 			}
 			if(dirPos.z >= 0){
 				tex.mirrorX = true;
@@ -202,7 +210,4 @@ public class Tower1 : Building {
 			tex.InitFace();
 		}
 		} 
-
-	
-
 }

@@ -3,6 +3,8 @@ using System.Collections;
 
 public class InGame : MonoBehaviour {
 
+	public TweenPosition techTween;
+
 	public UIButton tower01;
 	public UIButton tower02;
 	public UIButton tower03;
@@ -18,14 +20,20 @@ public class InGame : MonoBehaviour {
 	public UIButton start;
 	public UIButton techTree;
 	public UIButton wiki;
+	public UIButton closeBtn;
+
+	private TechNode node;
 	
 	void Start(){
+		node = new TechNode ();
+
 		//get the tower01 button
 		UIEventListener.Get (tower01.gameObject).onClick += OnCreateTower01;
 		
 		UIEventListener.Get (stop.gameObject).onClick += OnStop;
 		UIEventListener.Get (start.gameObject).onClick += OnStart;
 		UIEventListener.Get (techTree.gameObject).onClick += OnShowTechTree;
+		UIEventListener.Get (closeBtn.gameObject).onClick += OnHideTechTree;
 		UIEventListener.Get (wiki.gameObject).onClick += OnShowWiki;
 		Time.timeScale = 0;
 	}
@@ -51,9 +59,16 @@ public class InGame : MonoBehaviour {
 	public void OnStart(GameObject obj){
 		Time.timeScale = 1;
 	}
-	void OnShowTechTree(GameObject obj){
-		
+
+	public void OnShowTechTree(GameObject obj){
+		techTween.PlayForward ();
+		Time.timeScale = 0;
 	}
+
+	public void OnHideTechTree(GameObject obj){
+		techTween.PlayReverse ();
+	}
+
 	void OnShowWiki(GameObject obj){
 		
 	}
@@ -64,8 +79,13 @@ public class InGame : MonoBehaviour {
 		UIEventListener.Get (stop.gameObject).onClick -= OnStop;
 		UIEventListener.Get (start.gameObject).onClick -= OnStart;
 		UIEventListener.Get (techTree.gameObject).onClick -= OnShowTechTree;
+		UIEventListener.Get (closeBtn.gameObject).onClick -= OnHideTechTree;
 		UIEventListener.Get (wiki.gameObject).onClick -= OnShowWiki;
 	}
 
-
+	void Update(){
+		if (node.GetTower8) {
+			tower08.transform.GetChild(0).gameObject.SetActive(false);
+		}
+	}
 }

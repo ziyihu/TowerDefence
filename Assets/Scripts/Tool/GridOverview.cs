@@ -21,9 +21,9 @@ public class GridOverview : MonoBehaviour {
 	public float smallStep;
 	public float largeStep;
 
-	public int gridObjSizeX;
-	public int gridObjSizeY;
-	public int gridObjSizeZ;
+	public float gridObjSizeX;
+	public float gridObjSizeY;
+	public float gridObjSizeZ;
 
 	public float startX;
 	public float startY;

@@ -1,11 +1,13 @@
 ﻿using UnityEngine;
 using System.Collections;
+using System.Collections.Generic;
 
 public class Tower2 : Building {
-	//Current Enemy
 	public Character curEnemy;
+	public Character secondEnemy;
+	public List<Character> enemyLists = new List<Character> ();
 	
-	public int level = 1;
+	public int attackPower = 100;
 	
 	float mHitDelta;
 	bool endAttack = true;
@@ -16,43 +18,22 @@ public class Tower2 : Building {
 	float scalefactor = 0.6f;
 	int turnSpeed = 12;
 	Vector3 dirPos;
-	
+	float attackIntervale = 1;
 	float dirRotation;
+	bool isExist;
 	
 	public Tower2(){
 		this.START_METHOD("Tower2");
-		
 		model = (GameObject)GameObject.Instantiate(Resources.Load("tower2"));
 		model.name = "" + ID;
-		
 		status = model.GetComponent<CharacterStatus> ();
 		status.rotateWeapon = true;
 		status.CurPose = CharacterStatus.Pose.None;
-		
-		//set the weapon attack power
-		
-		
 		//get the building
 		Transform house = model.transform.GetChild (0);
 		house.gameObject.GetComponent<Renderer>().sortingOrder = layerOrder = LAYER_BASE + 1;
-		buildingType = CharacterData.buildingMode.TOWER1;
-		//TODO
-		//name, attack number, attack range
-		
+		buildingType = CharacterData.buildingMode.TOWER2;
 		this.END_METHOD("Tower2");
-	}
-	
-	
-	public override void Start(){
-		
-	}
-	
-	public virtual void Update(){
-		base.Update ();
-		//check enemy
-		CheckEnemy ();
-		//hit enemy
-		HitEnemy ();
 	}
 	
 	//attack one time
@@ -75,17 +56,66 @@ public class Tower2 : Building {
 			//get the enemy list
 			if(EnemySpawnManager._instance.enemyList.Count > 0){
 				//attack the enemy
-				curEnemy = EnemySpawnManager._instance.enemyList[0];
-				if(curEnemy != null){
-					status.CurPose = CharacterStatus.Pose.Attack;
-					dirPos = this.GetPosition() - curEnemy.GetPos();
-					
-					//dir.y = 0;
-					RotateTowards();
-					ChangeDirection();
+				foreach(Character chara in EnemySpawnManager._instance.enemyList){
+					if(Vector3.Distance(this.GetPos(),chara.GetPos()) < this.GetAttackRange() && chara.Life >= 0){
+						isExist = false;
+						for(int i = 0 ; i < enemyLists.Count; i++)
+						{
+							if(enemyLists[i].ID == chara.ID){
+								isExist = true;
+							}
+						}
+						if(isExist == false){
+							enemyLists.Add(chara);
+						}
+							for(int i = 0;i < enemyLists.Count ; i ++){
+							if(enemyLists[i].Life <= 0){
+								enemyLists.Remove(enemyLists[i]);
+							}
+						}
+					} else if(Vector3.Distance(this.GetPos(),chara.GetPos()) >= this.GetAttackRange() || chara.Life <= 0){
+						enemyLists.Remove(chara);
+					}
 				}
-				lastTime = Time.realtimeSinceStartup;
+				if(enemyLists.Count == 1){
+					curEnemy = enemyLists[0];
+					secondEnemy = null;
+				} else if(enemyLists.Count == 0){
+					curEnemy = null;
+					secondEnemy = null;
+					return;
+				} else if(enemyLists.Count > 1){
+					curEnemy = enemyLists[0];
+					secondEnemy = enemyLists[1];
+				}
+				if(curEnemy != null){
+					if (Vector3.Distance (this.GetPos (), curEnemy.GetPos ()) >= this.GetAttackRange ()) {
+						enemyLists.Remove (curEnemy);
+						curEnemy = null;
+					}
+					if(curEnemy!= null){
+						status.CurPose = CharacterStatus.Pose.Attack;
+						dirPos = this.GetPosition() - curEnemy.GetPos();
+						
+						//dir.y = 0;
+						RotateTowards();
+						ChangeDirection();
+						
+					}
+				
+					if(secondEnemy != null){
+						if (Vector3.Distance (this.GetPos (), secondEnemy.GetPos ()) >= this.GetAttackRange ()) {
+							enemyLists.Remove (secondEnemy);
+							secondEnemy = null;
+						}
+					}
+				}
+			} else if(EnemySpawnManager._instance.enemyList.Count == 0){
+				enemyLists.Clear();
+				curEnemy = null;
+				secondEnemy = null;
 			}
+			lastTime = Time.realtimeSinceStartup;
 		}
 	}
 	
@@ -94,9 +124,15 @@ public class Tower2 : Building {
 		if (GameManager.Instance.CurStatus != GameManager.Status.START_GAME) {
 			return;
 		}
-		Debug.Log ("1");
-		if (EnemySpawnManager._instance.enemyList.Count != 0) {
-			curEnemy = EnemySpawnManager._instance.enemyList [0];
+		if(enemyLists.Count == 1){
+			curEnemy = enemyLists[0];
+			secondEnemy = null;
+		} else if(enemyLists.Count == 0){
+			curEnemy = null;
+			return;
+		} else if(enemyLists.Count > 1){
+			curEnemy = enemyLists[0];
+			secondEnemy = enemyLists[1];
 		}
 		if (curEnemy == null) {
 			if(GetTransform()!=null){
@@ -104,10 +140,17 @@ public class Tower2 : Building {
 				status.CurPose = CharacterStatus.Pose.None;
 			}
 			return;
-			
 		} 
+		if(Vector3.Distance(this.GetPos(),curEnemy.GetPos()) >= this.GetAttackRange() || curEnemy.Life <= 0){
+			enemyLists.Remove(curEnemy);
+			curEnemy = null;
+		}
+		if (curEnemy != null ) {
+			HitAnimation ();
+		}
+
 		//hit enemy
-		HitAnimation ();
+
 		if (Time.realtimeSinceStartup > lastTime + data.attackInterval) {
 			endAttack = false;
 			lastAttackTime = Time.realtimeSinceStartup;
@@ -116,50 +159,52 @@ public class Tower2 : Building {
 	
 	void HitAnimation()
 	{
-		Debug.Log ("33");
 		if (endAttack||canAttack == false) 
 			return;
 		mHitDelta += RealTime.deltaTime;
 		float rate = 0.5f;
-		
 		if (  rate < mHitDelta) {
-			
 			mHitDelta = (rate > 0f) ? mHitDelta - rate : 0f;
-			if(curFps >0)
-			{
+			if(curFps >0) {
 				curFps = 0;				
 				GetTransform().GetChild(0).localPosition = new Vector3(0.0f,0.3f,0.0f);	
 				QuadTextureNgui gui = GetTransform().GetChild(0).GetComponent<QuadTextureNgui>();
 				gui.ScaleFactor = 0.5f;
-				
 				endAttack = true;
 				canAttack = false;
-				
-				
-			}
-			else
-			{	
-				GameObject bulletgo = (GameObject)GameObject.Instantiate(Resources.Load("cannonbullet"));
-				CannonBullet bullet = bulletgo.GetComponent<CannonBullet>();
-				Transform gun =	GetTransform().GetChild(0);
-				
-				bulletgo.transform.position = GetTransform().position+GetTransform().forward * 0.6f;
-				//bulletgo.transform.position = gun.position ;
-				
-				bullet.parent2 = this;
-				
-				if(EnemySpawnManager._instance.enemyList.Count > 0){
-					curEnemy = EnemySpawnManager._instance.enemyList[0];
-					bullet.Fire(curEnemy);
-					Vector3 dir = Vector3.back* moveDistance;
-					GetTransform().GetChild(0).localPosition =new Vector3(dir.x , dir.y + 0.3f, dir.z) ;
-					QuadTextureNgui gui = GetTransform().GetChild(0).GetComponent<QuadTextureNgui>();
-					gui.ScaleFactor = scalefactor; 
-					curFps++;
+			} else{	
+				if(curEnemy!= null){
+					GameObject bulletgo = (GameObject)GameObject.Instantiate(Resources.Load("cannonbullet"));
+					CannonBullet bullet = bulletgo.GetComponent<CannonBullet>();
+					Transform gun =	GetTransform().GetChild(0);
+					
+					bulletgo.transform.position = GetTransform().position+GetTransform().forward * 0.6f;
+					//bulletgo.transform.position = gun.position ;
+					bullet.parent2 = this;
+					if(curEnemy!=null) bullet.Fire(curEnemy);
+						Vector3 dir = Vector3.back* moveDistance;
+						GetTransform().GetChild(0).localPosition =new Vector3(dir.x , dir.y + 0.3f, dir.z) ;
+						QuadTextureNgui gui = GetTransform().GetChild(0).GetComponent<QuadTextureNgui>();
+						gui.ScaleFactor = scalefactor; 
+						curFps++;
 				}
-				
+					if(secondEnemy != null){
+						GameObject bulletgo1 = (GameObject)GameObject.Instantiate(Resources.Load("cannonbullet1"));
+						CannonBullet bullet1 = bulletgo1.GetComponent<CannonBullet>();
+						bulletgo1.transform.position = GetTransform().position+GetTransform().forward * 0.6f;
+						//bulletgo.transform.position = gun.position ;
+						bullet1.parent2 = this;
+						if(secondEnemy!=null) bullet1.Fire(secondEnemy);
+						Vector3 dir1 = Vector3.back* moveDistance;
+						GetTransform().GetChild(0).localPosition =new Vector3(dir1.x , dir1.y + 0.3f, dir1.z) ;
+						QuadTextureNgui gui1 = GetTransform().GetChild(0).GetComponent<QuadTextureNgui>();
+						gui1.ScaleFactor = scalefactor; 
+						curFps++;
+
+					}
+				}
 			}
-		}
+
 	}
 	
 	
@@ -178,7 +223,8 @@ public class Tower2 : Building {
 	public Vector3 GetPosition(){
 		return model.transform.position;
 	}
-	
+
+
 	public void ChangeDirection(){
 		//	dirRotation = Vector3.Angle(this.GetPosition(), curEnemy.GetPos ());
 		dirRotation = Vector3.Angle (dirPos, Vector3.right);
@@ -186,7 +232,7 @@ public class Tower2 : Building {
 		
 		if(dirRotation >= 0.0f && dirRotation <= 180f){
 			int angle = 19 - (int)(dirRotation /10.0f) ;
-			tex.mSpriteName = level + " " + "(" + angle + ")";
+			tex.mSpriteName = data.level + " " + "(" + angle + ")";
 			if(dirPos.z >= 0){
 				tex.mirrorX = true;
 			}else {

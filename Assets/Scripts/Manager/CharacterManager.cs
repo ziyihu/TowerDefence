@@ -23,8 +23,9 @@ public class CharacterManager : MonoBehaviour,IMessageObject {
 				chara.SetDir(dir);
 				chara.SetPose(pose);
 				chara.SetCamp(camp);
+				chara.SetSpeed(0.01f);
 				//set bowman max life
-				chara.SetLife(100);
+				chara.SetLife(200);
 				tempChar = chara;
 			} else if((CharacterData.CharacterModel)charModeType == CharacterData.CharacterModel.GIANT){
 				Gaint chara = new Gaint();
@@ -32,8 +33,9 @@ public class CharacterManager : MonoBehaviour,IMessageObject {
 				chara.SetDir(dir);
 				chara.SetPose(pose);
 				chara.SetCamp(camp);
+				chara.SetSpeed(0.01f);
 				//set giant max life
-				chara.SetLife(200);
+				chara.SetLife(400);
 				tempChar = chara;
 			} else if((CharacterData.CharacterModel)charModeType == CharacterData.CharacterModel.VIKING){
 				Viking chara = new Viking();
@@ -41,6 +43,7 @@ public class CharacterManager : MonoBehaviour,IMessageObject {
 				chara.SetDir(dir);
 				chara.SetPose(pose);
 				chara.SetCamp(camp);
+				chara.SetSpeed(0.01f);
 				//set viking max life
 				chara.SetLife(300);
 				tempChar = chara;
@@ -73,23 +76,62 @@ public class CharacterManager : MonoBehaviour,IMessageObject {
 			//Tower01
 			else if((CharacterData.buildingMode)charModeType == CharacterData.buildingMode.TOWER1){
 				Tower1 character = new Tower1();
+				character.SetAttackRange(3);
+				character.SetLevel(1);
 				character.SetPos(pos);
 				character.SetDir(dir);
 				character.SetPose (pose);
 				character.SetCamp(camp);
 				//set attack power
-				character.SetAttackPower(50);
+				character.SetAttackPower(1);
 				tempChar = character;
 			}
 			//Tower02
 			else if((CharacterData.buildingMode)charModeType == CharacterData.buildingMode.TOWER2){
 				Tower2 character = new Tower2();
+				character.SetAttackRange(3);
+				character.SetLevel(1);
 				character.SetPos(pos);
 				character.SetDir(dir);
 				character.SetPose (pose);
 				character.SetCamp(camp);
 				//set attack power
-				character.SetAttackPower(70);
+				character.SetAttackPower(1);
+				tempChar = character;
+			}
+			//Tower4
+			else if((CharacterData.buildingMode)charModeType == CharacterData.buildingMode.TOWER4){
+				Tower4 character = new Tower4();
+				character.SetAttackRange(2);
+				character.SetLevel(1);
+				character.SetPos(pos);
+				character.SetDir(dir);
+				character.SetPose(pose);
+				character.SetCamp(camp);
+				tempChar = character;
+			}
+			//Tower7
+			else if((CharacterData.buildingMode)charModeType == CharacterData.buildingMode.TOWER7){
+				Tower7 character = new Tower7();
+				character.SetAttackRange(2);
+				character.SetLevel(1);
+				character.SetPos(pos);
+				character.SetDir(dir);
+				character.SetPose(pose);
+				character.SetCamp(camp);
+				character.SetAttackPower(1);
+				tempChar = character;
+			}
+			//Tower10
+			else if((CharacterData.buildingMode)charModeType == CharacterData.buildingMode.TOWER10){
+				Tower10 character = new Tower10();
+				character.SetAttackRange(4);
+				character.SetLevel(1);
+				character.SetPos(pos);
+				character.SetDir(dir);
+				character.SetPose(pose);
+				character.SetCamp(camp);
+				character.SetAttackPower(1);
 				tempChar = character;
 			}
 			//created the barrack, add to the building list
@@ -141,6 +183,10 @@ public class CharacterManager : MonoBehaviour,IMessageObject {
 			}
 		}
 		this.END_METHOD("DestoryChar");
+	}
+
+	IEnumerator WaitAni(){
+		yield return new WaitForSeconds (2);
 	}
 
 	//delete one building
@@ -198,14 +244,5 @@ public class CharacterManager : MonoBehaviour,IMessageObject {
 		}
 		return chara;
 	}
-
-	// Use this for initialization
-	void Start () {
 	
-	}
-	
-	// Update is called once per frame
-	void Update () {
-
-	}
 }

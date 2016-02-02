@@ -10,6 +10,8 @@ public class EnemySpawnManager : MonoBehaviour {
 	public EnemySpawn[] vikingBornArray;
 	public EnemySpawn[] gaintBornArray;
 
+	public bool isStart = false;
+
 	public List<Character> enemyList = new List<Character>();
 
 	void Awake(){
@@ -51,8 +53,4 @@ public class EnemySpawnManager : MonoBehaviour {
 
 	}
 
-	// Update is called once per frame
-	void Update () {
-	
-	}
 }

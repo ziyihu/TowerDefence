@@ -21,12 +21,14 @@ public  class Character : IMessageObject,IComparable<Character>
 	public CharacterStatus GetCharacterStatus {get{ return status;} }
 	public long ID{ get { return mId; } }
 	public float Life {get{return data.life;}}
+	public float Speed { get { return data.speed; } }
 	public int GetCurrentSkillId() {return data.currentUseSkillId;}
 	public int GetAttackPower(){return data.attackPower;}
 	public float GetAttackRange(){return data.attackRange;}
 	public int GetCamp(){return data.camp;}
 	public Vector3 GetLocalPos(){return model.transform.localPosition;}
 	public Vector3 GetRealPos(){return model.transform.position;}
+	public int GetLevel() {return data.level;}
 	//public Vector3 GetPos
 	private bool bNeedChange = false;
 	private bool bInited = false;
@@ -66,10 +68,10 @@ public  class Character : IMessageObject,IComparable<Character>
 	}
 	public virtual void SetLayer(int order)
 	{
-		this.START_METHOD ( "SetPos");
+		this.START_METHOD ("SetLayer");
 		layerOrder = order + LAYER_BASE;
 		model.transform.GetChild(0).GetComponent<Renderer>().sortingOrder = layerOrder;
-		this.END_METHOD( "SetPos");
+		this.END_METHOD("SetLayer");
 	}
 	public Vector3 GetPos()
 	{
@@ -77,30 +79,30 @@ public  class Character : IMessageObject,IComparable<Character>
 	}
 	public void SetPos(Vector3 pos)
 	{
-		this.START_METHOD ( "SetPos");
+		this.START_METHOD ("SetPos");
 		data.pos = pos;
 		bNeedChange = true;
-		this.END_METHOD( "SetPos");
+		this.END_METHOD("SetPos");
 	}
 	public void SetDir(Vector3 rotate)
 	{
-		this.START_METHOD ( "SetDir");
+		this.START_METHOD ("SetDir");
 		data.rotation = rotate;
 		bNeedChange = true;
-		this.END_METHOD ( "SetDir");
+		this.END_METHOD ("SetDir");
 	}
 	public void SetPose(CharacterStatus.Pose pose)
 	{
-		this.START_METHOD ( "SetPose");
+		this.START_METHOD ("SetPose");
 		data.pose = pose;
 		bNeedChange = true;
-		this.END_METHOD ( "SetPose");
+		this.END_METHOD ("SetPose");
 	}
 	public void SetLevel(int level)
 	{
-		this.START_METHOD ( "SetLevel");
+		this.START_METHOD ("SetLevel");
 		data.level = level;
-		this.END_METHOD ( "SetLevel");
+		this.END_METHOD ("SetLevel");
 	}
 	public void SetColor(Color color)
 	{
@@ -108,9 +110,9 @@ public  class Character : IMessageObject,IComparable<Character>
 	}
 	public void SetCamp(int camp)
 	{
-		this.START_METHOD ( "SetCamp");
+		this.START_METHOD ("SetCamp");
 		data.camp = camp;
-		this.END_METHOD ( "SetCamp");
+		this.END_METHOD ("SetCamp");
 	}
 	public void SetLife(int life){
 		this.START_METHOD("SetLife");
@@ -123,7 +125,12 @@ public  class Character : IMessageObject,IComparable<Character>
 		data.attackPower = power;
 		this.END_METHOD("SetAttackPower");
 	}
-
+	public void SetAttackRange(float range){
+		data.attackRange = range;
+	}
+	public void SetSpeed(float speed){
+		data.speed = speed;
+	}
 	public virtual void Start()
 	{
 		if (data.classType == (int)CharacterData.CharacterClassType.CHARACTER)

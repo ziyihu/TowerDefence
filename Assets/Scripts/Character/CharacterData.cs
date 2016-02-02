@@ -25,7 +25,15 @@ public struct CharacterData{
 		TOWER7,
 		TOWER8,
 		TOWER9,
-		TOWER10
+		TOWER10,
+		MINE1,
+		MINE2,
+		GENERATOR1,
+		GENERATOR2,
+		ANTENNA,
+		LAB,
+		CAPACITOR,
+		ALIEN
 	}
 	public void Reset(){
 		isDirty = true;
