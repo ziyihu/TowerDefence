@@ -7,7 +7,7 @@ public class Tower1 : Building {
 	public Character curEnemy;
 	public List<Character> enemyLists = new List<Character> ();
 	public int attackPower = 100;
-	
+	public float time = 0;
 	float mHitDelta;
 	bool endAttack = true;
 	int curFps = 0;
@@ -124,6 +124,7 @@ public class Tower1 : Building {
 		}
 		//hit enemy
 		HitAnimation ();
+
 		if (Time.realtimeSinceStartup > lastTime + data.attackInterval) {
 			endAttack = false;
 			lastAttackTime = Time.realtimeSinceStartup;
@@ -134,9 +135,9 @@ public class Tower1 : Building {
 		if (endAttack||canAttack == false) 
 			return;
 		mHitDelta += RealTime.deltaTime;
-		float rate = 0.5f;
-		if (rate < mHitDelta) {
-			mHitDelta = (rate > 0f) ? mHitDelta - rate : 0f;
+		float rate = 1f;
+		if (data.attackRate < mHitDelta) {
+			mHitDelta = (data.attackRate > 0f) ? mHitDelta - data.attackRate : 0f;
 			if(curFps >0) {
 				curFps = 0;				
 				GetTransform().GetChild(0).localPosition = new Vector3(0.0f,0.3f,0.0f);	

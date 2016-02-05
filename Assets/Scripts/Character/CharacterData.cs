@@ -57,6 +57,7 @@ public struct CharacterData{
 	public float attackRange;
 	public float searchInterval;
 	public float attackInterval;
+	public float attackRate;
 	public int currentUseSkillId;
 
 }

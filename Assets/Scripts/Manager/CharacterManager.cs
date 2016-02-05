@@ -23,7 +23,7 @@ public class CharacterManager : MonoBehaviour,IMessageObject {
 				chara.SetDir(dir);
 				chara.SetPose(pose);
 				chara.SetCamp(camp);
-				chara.SetSpeed(0.01f);
+				chara.SetSpeed(0.1f);
 				//set bowman max life
 				chara.SetLife(200);
 				tempChar = chara;
@@ -82,6 +82,7 @@ public class CharacterManager : MonoBehaviour,IMessageObject {
 				character.SetDir(dir);
 				character.SetPose (pose);
 				character.SetCamp(camp);
+				character.SetAttackRate(1f);
 				//set attack power
 				character.SetAttackPower(1);
 				tempChar = character;
@@ -95,6 +96,7 @@ public class CharacterManager : MonoBehaviour,IMessageObject {
 				character.SetDir(dir);
 				character.SetPose (pose);
 				character.SetCamp(camp);
+				character.SetAttackRate(1f);
 				//set attack power
 				character.SetAttackPower(1);
 				tempChar = character;
@@ -120,6 +122,7 @@ public class CharacterManager : MonoBehaviour,IMessageObject {
 				character.SetPose(pose);
 				character.SetCamp(camp);
 				character.SetAttackPower(1);
+				character.SetAttackRate(1f);
 				tempChar = character;
 			}
 			//Tower10
@@ -132,6 +135,7 @@ public class CharacterManager : MonoBehaviour,IMessageObject {
 				character.SetPose(pose);
 				character.SetCamp(camp);
 				character.SetAttackPower(1);
+				character.SetAttackRate(2f);
 				tempChar = character;
 			}
 			//created the barrack, add to the building list
@@ -146,6 +150,7 @@ public class CharacterManager : MonoBehaviour,IMessageObject {
 		this.END_METHOD("SpawnCharacter");
 		return tempChar;
 	}
+	
 
 	//delete all the character
 	public void DestoryAll(){

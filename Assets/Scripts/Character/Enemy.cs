@@ -85,7 +85,6 @@ public class Enemy : Character {
 		}
 	}
 
-
 	public void Start(){
 		data.classType = (int)CharacterData.CharacterClassType.CHARACTER;
 		base.Start ();

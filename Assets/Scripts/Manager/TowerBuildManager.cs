@@ -9,13 +9,22 @@ public class TowerBuildManager : MonoBehaviour {
 	public static bool tower02 = false;
 	//can put the laser tower or not
 	public static bool tower10 = false;
-	public static bool tower03 = false;
 	//can put the slow tower or not
 	public static bool tower04 = false;
 	//can put the missile tower or not
 	public static bool tower07 = false;
+
+	public static bool tower03 = false;
 	public static bool tower05 = false;
 	public static bool tower06 = false;
+
+	public static float tower1AttackRate = 1f;
+	public static float tower2AttackRate = 2f;
+	public static float tower4AttackRate = 2f;
+	public static float tower7AttackRate = 2f;
+	public static float tower10AttackRate = 2f;
+
+	public static float time = 0;
 
 	//tower info panel
 	public TweenPosition towerInfoTween;
@@ -36,7 +45,13 @@ public class TowerBuildManager : MonoBehaviour {
 	
 	// Update is called once per frame
 	void Update () {
-
+//		RaycastHit hit = new RaycastHit();
+//		Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
+//		Physics.Raycast(ray, out hit, 100);
+//		if (hit.collider.tag == "Map") {
+//			Debug.Log("x:"+hit.point.x + "\t\ty:"+hit.point.y+"\t\tz:"+hit.point.z);
+//		}
+		time = time + Time.deltaTime;
 		if (tower01) {
 			if(Input.GetMouseButtonDown(0)){
 				SetTower("tower1");
@@ -63,12 +78,15 @@ public class TowerBuildManager : MonoBehaviour {
 				tower10 = false;
 			}
 		}
-		if (gManager.tower1List.Count > 0 && Time.timeScale == 1) {
-			foreach (Tower1 t in gManager.tower1List) {
-				t.CheckEnemy ();
-				t.HitEnemy ();
+		//if(time > tower1AttackRate){
+			if (gManager.tower1List.Count > 0 && Time.timeScale == 1) {
+				foreach (Tower1 t in gManager.tower1List) {
+					t.CheckEnemy ();
+					t.HitEnemy ();
+				}
 			}
-		}
+		//	time = 0;
+		//}
 		if (gManager.tower2List.Count > 0 && Time.timeScale == 1) {
 			foreach (Tower2 t in gManager.tower2List) {
 				t.CheckEnemy ();
@@ -122,6 +140,13 @@ public class TowerBuildManager : MonoBehaviour {
 				description = "this tower has low range, medium rate of fire, can shoot two enemies";
 				building = cManager.GetBuildingById(int.Parse(hit.collider.transform.name));
 				attackNumber = building.GetAttackPower()+"";
+				levelNumber = building.GetLevel()+"";
+				SetPanel(name,description,attackNumber,levelNumber);
+			} else if(hit.transform.tag == "Tower4"){
+				name = "Stasis Tower";
+				description = "this tower slows the near enemies";
+				building = cManager.GetBuildingById(int.Parse(hit.collider.transform.name));
+				attackNumber = 0 + "";
 				levelNumber = building.GetLevel()+"";
 				SetPanel(name,description,attackNumber,levelNumber);
 			} else if(hit.transform.tag == "Tower7"){
@@ -262,9 +287,24 @@ public class TowerBuildManager : MonoBehaviour {
 		Physics.Raycast(ray, out hit, 100);
 		if(hit.transform != null){
 			if(hit.transform.tag == "Map"){
-				float x = (float)((int)(hit.point.x+0.5f));
+				//set the tower position
+				float x = 0;
+				if(hit.point.x - (int)hit.point.x <= 0.9f && hit.point.x - (int)hit.point.x > 0.4f){
+					x = (int)hit.point.x + 0.65f;
+				} else if(hit.point.x - (int)hit.point.x <= 0.4f && hit.point.x - (int)hit.point.x >= 0){
+					x = (int)hit.point.x + 0.15f;
+				} else {
+					x = (int)hit.point.x + 1.15f;
+				}
 				float y = 1.0f;
-				float z = (float) ((int)hit.point.z) + 0.3f;
+				float z = 0;
+				if(hit.point.z - (int)hit.point.z <= 0.05f && hit.point.z - (int)hit.point.z >= 0){
+					z = (int)hit.point.z - 0.2f;
+				} else if(hit.point.z - (int)hit.point.z <= 0.55f && hit.point.z - (int)hit.point.z > 0.05f){
+					z = (int)hit.point.z + 0.3f;
+				} else {
+					z = (int)hit.point.z + 0.8f;
+				}
 				Vector3 obstacle3Pos = new Vector3 (x, y, z);
 				if(tower == "tower1"){
 					Tower1 tower1 = (Tower1)cManager.SpawnCharacter(CharacterData.CharacterClassType.BUILDING, (int)CharacterData.buildingMode.TOWER1, 1,

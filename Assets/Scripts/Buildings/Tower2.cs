@@ -5,6 +5,8 @@ using System.Collections.Generic;
 public class Tower2 : Building {
 	public Character curEnemy;
 	public Character secondEnemy;
+	public Character thirdEnemy;
+	public Character forthEnemy;
 	public List<Character> enemyLists = new List<Character> ();
 	
 	public int attackPower = 100;
@@ -80,14 +82,31 @@ public class Tower2 : Building {
 				if(enemyLists.Count == 1){
 					curEnemy = enemyLists[0];
 					secondEnemy = null;
+					thirdEnemy = null;
+					forthEnemy = null;
 				} else if(enemyLists.Count == 0){
 					curEnemy = null;
 					secondEnemy = null;
+					thirdEnemy = null;
+					forthEnemy = null;
 					return;
-				} else if(enemyLists.Count > 1){
+				} else if(enemyLists.Count == 2){
 					curEnemy = enemyLists[0];
 					secondEnemy = enemyLists[1];
+					thirdEnemy = null;
+					forthEnemy = null;
+				} else if(enemyLists.Count == 3){
+					curEnemy = enemyLists[0];
+					secondEnemy = enemyLists[1];
+					thirdEnemy = enemyLists[2];
+					forthEnemy = null;
+				}  else{
+					curEnemy = enemyLists[0];
+					secondEnemy = enemyLists[1];
+					thirdEnemy = enemyLists[2];
+					forthEnemy = enemyLists[3];
 				}
+
 				if(curEnemy != null){
 					if (Vector3.Distance (this.GetPos (), curEnemy.GetPos ()) >= this.GetAttackRange ()) {
 						enemyLists.Remove (curEnemy);
@@ -108,12 +127,28 @@ public class Tower2 : Building {
 							enemyLists.Remove (secondEnemy);
 							secondEnemy = null;
 						}
+						if(thirdEnemy != null){
+							if (Vector3.Distance (this.GetPos (), thirdEnemy.GetPos ()) >= this.GetAttackRange ()) {
+								enemyLists.Remove (thirdEnemy);
+								thirdEnemy = null;
+							}
+							if(forthEnemy != null){
+								if (Vector3.Distance (this.GetPos (), forthEnemy.GetPos ()) >= this.GetAttackRange ()) {
+									enemyLists.Remove (forthEnemy);
+									forthEnemy = null;
+								}
+							}
+						}
 					}
+				
+
 				}
 			} else if(EnemySpawnManager._instance.enemyList.Count == 0){
 				enemyLists.Clear();
 				curEnemy = null;
 				secondEnemy = null;
+				thirdEnemy = null;
+				forthEnemy = null;
 			}
 			lastTime = Time.realtimeSinceStartup;
 		}
@@ -127,12 +162,29 @@ public class Tower2 : Building {
 		if(enemyLists.Count == 1){
 			curEnemy = enemyLists[0];
 			secondEnemy = null;
+			thirdEnemy = null;
+			forthEnemy = null;
 		} else if(enemyLists.Count == 0){
 			curEnemy = null;
+			secondEnemy = null;
+			thirdEnemy = null;
+			forthEnemy = null;
 			return;
-		} else if(enemyLists.Count > 1){
+		} else if(enemyLists.Count == 2){
 			curEnemy = enemyLists[0];
 			secondEnemy = enemyLists[1];
+			thirdEnemy = null;
+			forthEnemy = null;
+		} else if(enemyLists.Count == 3){
+			curEnemy = enemyLists[0];
+			secondEnemy = enemyLists[1];
+			thirdEnemy = enemyLists[2];
+			forthEnemy = null;
+		} else{
+			curEnemy = enemyLists[0];
+			secondEnemy = enemyLists[1];
+			thirdEnemy = enemyLists[2];
+			forthEnemy = enemyLists[3];
 		}
 		if (curEnemy == null) {
 			if(GetTransform()!=null){
@@ -162,9 +214,9 @@ public class Tower2 : Building {
 		if (endAttack||canAttack == false) 
 			return;
 		mHitDelta += RealTime.deltaTime;
-		float rate = 0.5f;
-		if (  rate < mHitDelta) {
-			mHitDelta = (rate > 0f) ? mHitDelta - rate : 0f;
+		float rate = 1f;
+		if (  data.attackRate < mHitDelta) {
+			mHitDelta = (data.attackRate > 0f) ? mHitDelta - data.attackRate : 0f;
 			if(curFps >0) {
 				curFps = 0;				
 				GetTransform().GetChild(0).localPosition = new Vector3(0.0f,0.3f,0.0f);	
@@ -174,7 +226,7 @@ public class Tower2 : Building {
 				canAttack = false;
 			} else{	
 				if(curEnemy!= null){
-					GameObject bulletgo = (GameObject)GameObject.Instantiate(Resources.Load("cannonbullet"));
+					GameObject bulletgo = (GameObject)GameObject.Instantiate(Resources.Load("cannonbullet1"));
 					CannonBullet bullet = bulletgo.GetComponent<CannonBullet>();
 					Transform gun =	GetTransform().GetChild(0);
 					
@@ -189,7 +241,7 @@ public class Tower2 : Building {
 						curFps++;
 				}
 					if(secondEnemy != null){
-						GameObject bulletgo1 = (GameObject)GameObject.Instantiate(Resources.Load("cannonbullet1"));
+						GameObject bulletgo1 = (GameObject)GameObject.Instantiate(Resources.Load("cannonbullet2"));
 						CannonBullet bullet1 = bulletgo1.GetComponent<CannonBullet>();
 						bulletgo1.transform.position = GetTransform().position+GetTransform().forward * 0.6f;
 						//bulletgo.transform.position = gun.position ;
@@ -202,6 +254,34 @@ public class Tower2 : Building {
 						curFps++;
 
 					}
+				if(thirdEnemy != null){
+					GameObject bulletgo2 = (GameObject)GameObject.Instantiate(Resources.Load("cannonbullet3"));
+					CannonBullet bullet2 = bulletgo2.GetComponent<CannonBullet>();
+					bulletgo2.transform.position = GetTransform().position+GetTransform().forward * 0.6f;
+					//bulletgo.transform.position = gun.position ;
+					bullet2.parent2 = this;
+					if(thirdEnemy!=null) bullet2.Fire(thirdEnemy);
+					Vector3 dir1 = Vector3.back* moveDistance;
+					GetTransform().GetChild(0).localPosition =new Vector3(dir1.x , dir1.y + 0.3f, dir1.z) ;
+					QuadTextureNgui gui1 = GetTransform().GetChild(0).GetComponent<QuadTextureNgui>();
+					gui1.ScaleFactor = scalefactor; 
+					curFps++;
+					
+				}
+				if(forthEnemy != null){
+					GameObject bulletgo3 = (GameObject)GameObject.Instantiate(Resources.Load("cannonbullet4"));
+					CannonBullet bullet3 = bulletgo3.GetComponent<CannonBullet>();
+					bulletgo3.transform.position = GetTransform().position+GetTransform().forward * 0.6f;
+					//bulletgo.transform.position = gun.position ;
+					bullet3.parent2 = this;
+					if(forthEnemy!=null) bullet3.Fire(forthEnemy);
+					Vector3 dir1 = Vector3.back* moveDistance;
+					GetTransform().GetChild(0).localPosition =new Vector3(dir1.x , dir1.y + 0.3f, dir1.z) ;
+					QuadTextureNgui gui1 = GetTransform().GetChild(0).GetComponent<QuadTextureNgui>();
+					gui1.ScaleFactor = scalefactor; 
+					curFps++;
+					
+				}
 				}
 			}
 

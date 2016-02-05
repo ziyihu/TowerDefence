@@ -48,7 +48,8 @@ public class TechNode : MonoBehaviour {
 		isActive = true;
 		nodeButton.SetState(UIButtonColor.State.Pressed,true);
 		nodeButton.isEnabled = false;
-		active.gameObject.SetActive (true);
+		if(active != null)
+			active.gameObject.SetActive (true);
 		if (ableSprite == "bloodraven_1") {
 			isTower8 = true;
 		}

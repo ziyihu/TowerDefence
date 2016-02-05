@@ -133,9 +133,9 @@ public class Tower7 : Building {
 		if (endAttack||canAttack == false) 
 			return;
 		mHitDelta += RealTime.deltaTime;
-		float rate = 0.5f;
-		if (rate < mHitDelta) {
-			mHitDelta = (rate > 0f) ? mHitDelta - rate : 0f;
+		float rate = 1f;
+		if (data.attackRate < mHitDelta) {
+			mHitDelta = (data.attackRate > 0f) ? mHitDelta - data.attackRate : 0f;
 			if(curFps >0) {
 				curFps = 0;				
 				GetTransform().GetChild(0).localPosition = new Vector3(0.0f,0.3f,0.0f);	

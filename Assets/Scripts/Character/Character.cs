@@ -19,6 +19,7 @@ public  class Character : IMessageObject,IComparable<Character>
 	static long id;
 	long mId;
 	public CharacterStatus GetCharacterStatus {get{ return status;} }
+	public float AttackRate {get {return data.attackRate;}}
 	public long ID{ get { return mId; } }
 	public float Life {get{return data.life;}}
 	public float Speed { get { return data.speed; } }
@@ -128,6 +129,9 @@ public  class Character : IMessageObject,IComparable<Character>
 	public void SetAttackRange(float range){
 		data.attackRange = range;
 	}
+	public void SetAttackRate(float rate){
+		data.attackRate = rate;
+	}
 	public void SetSpeed(float speed){
 		data.speed = speed;
 	}
@@ -181,6 +185,7 @@ public  class Character : IMessageObject,IComparable<Character>
 		data.isDirty = true;
 		//isDirty = true;
 	}
+	
 	public int CompareTo(Character other)
 	{//default sort function
 		return 0;
