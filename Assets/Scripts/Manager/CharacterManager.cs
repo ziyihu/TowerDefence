@@ -5,10 +5,10 @@ using System.Collections.Generic;
 public class CharacterManager : MonoBehaviour,IMessageObject {
 
 	List<Character> chars = new List<Character>();
-	List<Character> building = new List<Character>();
+	public List<Character> building = new List<Character>();
 	List<Character> allCharacter = new List<Character> ();
 	List<Vector3> position = new List<Vector3>();
-
+	
 	Character chara = new Character();
 
 	public Character SpawnCharacter(CharacterData.CharacterClassType classType, int charModeType, int camp, int level, Vector3 pos, Vector3 dir, CharacterStatus.Pose pose){
@@ -23,7 +23,7 @@ public class CharacterManager : MonoBehaviour,IMessageObject {
 				chara.SetDir(dir);
 				chara.SetPose(pose);
 				chara.SetCamp(camp);
-				chara.SetSpeed(0.1f);
+				chara.SetSpeed(0.01f);
 				//set bowman max life
 				chara.SetLife(200);
 				tempChar = chara;

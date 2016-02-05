@@ -214,8 +214,7 @@ public class Tower2 : Building {
 		if (endAttack||canAttack == false) 
 			return;
 		mHitDelta += RealTime.deltaTime;
-		float rate = 1f;
-		if (  data.attackRate < mHitDelta) {
+		if (data.attackRate < mHitDelta) {
 			mHitDelta = (data.attackRate > 0f) ? mHitDelta - data.attackRate : 0f;
 			if(curFps >0) {
 				curFps = 0;				
@@ -228,10 +227,7 @@ public class Tower2 : Building {
 				if(curEnemy!= null){
 					GameObject bulletgo = (GameObject)GameObject.Instantiate(Resources.Load("cannonbullet1"));
 					CannonBullet bullet = bulletgo.GetComponent<CannonBullet>();
-					Transform gun =	GetTransform().GetChild(0);
-					
 					bulletgo.transform.position = GetTransform().position+GetTransform().forward * 0.6f;
-					//bulletgo.transform.position = gun.position ;
 					bullet.parent2 = this;
 					if(curEnemy!=null) bullet.Fire(curEnemy);
 						Vector3 dir = Vector3.back* moveDistance;

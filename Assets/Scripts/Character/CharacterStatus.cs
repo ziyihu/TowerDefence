@@ -146,7 +146,7 @@ public class CharacterStatus : MonoBehaviour {
 		bool needMirror = false;
 		int mfps = 12;
 		string namePrefix = "";
-		bool reverse = false;
+//		bool reverse = false;
 		if (mPose == Pose.Run) {
 			namePrefix = "walk";
 			if(mDir == Dir.RightDown){

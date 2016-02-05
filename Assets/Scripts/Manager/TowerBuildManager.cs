@@ -26,6 +26,9 @@ public class TowerBuildManager : MonoBehaviour {
 
 	public static float time = 0;
 
+	//circle to show the attack range
+	public GameObject circleObj;
+
 	//tower info panel
 	public TweenPosition towerInfoTween;
 	private int level;
@@ -134,6 +137,8 @@ public class TowerBuildManager : MonoBehaviour {
 				building = cManager.GetBuildingById(int.Parse(hit.collider.transform.name));
 				attackNumber = building.GetAttackPower()+"";
 				levelNumber = building.GetLevel()+"";
+				//show the attack range
+				SetAttackRangeShow(building);
 				SetPanel(name,description,attackNumber,levelNumber);
 			} else if(hit.transform.tag == "Tower2"){
 				name = "Shotgun Tower";
@@ -141,6 +146,7 @@ public class TowerBuildManager : MonoBehaviour {
 				building = cManager.GetBuildingById(int.Parse(hit.collider.transform.name));
 				attackNumber = building.GetAttackPower()+"";
 				levelNumber = building.GetLevel()+"";
+				SetAttackRangeShow(building);
 				SetPanel(name,description,attackNumber,levelNumber);
 			} else if(hit.transform.tag == "Tower4"){
 				name = "Stasis Tower";
@@ -148,6 +154,7 @@ public class TowerBuildManager : MonoBehaviour {
 				building = cManager.GetBuildingById(int.Parse(hit.collider.transform.name));
 				attackNumber = 0 + "";
 				levelNumber = building.GetLevel()+"";
+				SetAttackRangeShow(building);
 				SetPanel(name,description,attackNumber,levelNumber);
 			} else if(hit.transform.tag == "Tower7"){
 				name = "Missile Tower";
@@ -155,6 +162,7 @@ public class TowerBuildManager : MonoBehaviour {
 				building = cManager.GetBuildingById(int.Parse(hit.collider.transform.name));
 				attackNumber = building.GetAttackPower()+"";
 				levelNumber = building.GetLevel()+"";
+				SetAttackRangeShow(building);
 				SetPanel(name,description,attackNumber,levelNumber);
 			} else if(hit.transform.tag == "Tower10"){
 				name = "Laser Tower";
@@ -162,11 +170,24 @@ public class TowerBuildManager : MonoBehaviour {
 				building = cManager.GetBuildingById(int.Parse(hit.collider.transform.name));
 				attackNumber = building.GetAttackPower()+"";
 				levelNumber = building.GetLevel()+"";
+				SetAttackRangeShow(building);
 				SetPanel(name,description,attackNumber,levelNumber);
+			} else {
+				SetAttackRangeHide();
 			}
 		}
 	}
 
+	private void SetAttackRangeShow(Building building){
+		circleObj.gameObject.transform.GetComponent<DrawCircle>().m_Radius = building.GetAttackRange();
+		circleObj.SetActive(true);
+		circleObj.transform.position = building.GetPos();
+	}
+
+	private void SetAttackRangeHide(){
+		circleObj.SetActive (false);
+	}
+	
 	private void SetPanel(string nameText, string desText, string attackNumText, string levelNumText){
 		if (building.GetLevel() <= 2) {
 			upgrade.normalSprite = "btn_red1";
@@ -289,9 +310,9 @@ public class TowerBuildManager : MonoBehaviour {
 			if(hit.transform.tag == "Map"){
 				//set the tower position
 				float x = 0;
-				if(hit.point.x - (int)hit.point.x <= 0.9f && hit.point.x - (int)hit.point.x > 0.4f){
+				if(hit.point.x - (int)hit.point.x <= 0.8f && hit.point.x - (int)hit.point.x > 0.3f){
 					x = (int)hit.point.x + 0.65f;
-				} else if(hit.point.x - (int)hit.point.x <= 0.4f && hit.point.x - (int)hit.point.x >= 0){
+				} else if(hit.point.x - (int)hit.point.x <= 0.3f && hit.point.x - (int)hit.point.x >= 0){
 					x = (int)hit.point.x + 0.15f;
 				} else {
 					x = (int)hit.point.x + 1.15f;
@@ -305,7 +326,40 @@ public class TowerBuildManager : MonoBehaviour {
 				} else {
 					z = (int)hit.point.z + 0.8f;
 				}
+				//in the enemy position, can not set the tower
+				//restriction
+				if(x <= 14.65f || x >= 23.65f || z <= 16.55f || z >= 25.3f){
+					return;
+				}
+				//first path
+				if(x == 15.65f && z >= 18.3f && z <= 24.8f){
+					return;
+				}
+				//second path
+				if(x >= 16.15f && x <= 20.15f && (z == 18.3f || z == 18.8f)){
+					return;
+				}
+				//third path
+				if((x == 19.65f || x == 20.15f) && z >= 18.8f && z <= 23.8f){
+					return;
+				}
+				//forth path
+				if((z == 23.3f || z == 23.8f) && x >= 20.65f && x <= 22.65f){
+					return;
+				}
+				//fifth path
+				if((x == 22.15f || x == 22.65f) && z >= 19.3f && z <= 22.8f){
+					return;
+				}
+				if(x == 23.15f && (z == 19.8f || z == 19.3f)){
+					return;
+				}
 				Vector3 obstacle3Pos = new Vector3 (x, y, z);
+				foreach(Building building in cManager.building){
+					if(obstacle3Pos == building.GetPos()){
+						return;
+					}
+				}
 				if(tower == "tower1"){
 					Tower1 tower1 = (Tower1)cManager.SpawnCharacter(CharacterData.CharacterClassType.BUILDING, (int)CharacterData.buildingMode.TOWER1, 1,
 				                                                1, obstacle3Pos, new Vector3 (0, 0, 0), CharacterStatus.Pose.Idle);

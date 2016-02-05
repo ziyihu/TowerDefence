@@ -86,6 +86,33 @@ public class InGame : MonoBehaviour {
 	void Update(){
 		if (node.GetTower8) {
 			tower08.transform.GetChild(0).gameObject.SetActive(false);
-		}
+		} 
+		if (node.GetTower1) {
+			tower01.transform.GetChild(0).gameObject.SetActive(false);
+		} 
+		if (node.GetTower2) {
+			tower02.transform.GetChild(0).gameObject.SetActive(false);
+		} 
+		if (node.GetTower3) {
+			tower03.transform.GetChild(0).gameObject.SetActive(false);
+		} 
+		if (node.GetTower4) {
+			tower04.transform.GetChild(0).gameObject.SetActive(false);
+		} 
+		if (node.GetTower5) {
+			tower05.transform.GetChild(0).gameObject.SetActive(false);
+		} 	
+		if (node.GetTower6) {
+			tower06.transform.GetChild(0).gameObject.SetActive(false);
+		} 	
+		if (node.GetTower7) {
+			tower07.transform.GetChild(0).gameObject.SetActive(false);
+		} 
+		if (node.GetTower9) {
+			tower09.transform.GetChild(0).gameObject.SetActive(false);
+		} 
+		if (node.GetTower10) {
+			tower10.transform.GetChild(0).gameObject.SetActive(false);
+		} 
 	}
 }

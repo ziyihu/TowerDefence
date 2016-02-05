@@ -133,7 +133,6 @@ public class Tower7 : Building {
 		if (endAttack||canAttack == false) 
 			return;
 		mHitDelta += RealTime.deltaTime;
-		float rate = 1f;
 		if (data.attackRate < mHitDelta) {
 			mHitDelta = (data.attackRate > 0f) ? mHitDelta - data.attackRate : 0f;
 			if(curFps >0) {
@@ -147,9 +146,7 @@ public class Tower7 : Building {
 				if(curEnemy!= null) {
 					GameObject bulletgo = (GameObject)GameObject.Instantiate(Resources.Load("misslebullet"));
 					CannonBullet bullet = bulletgo.GetComponent<CannonBullet>();
-					Transform gun =	GetTransform().GetChild(0);
 					bulletgo.transform.position = GetTransform().position+GetTransform().forward * 0.6f;
-					//bulletgo.transform.position = gun.position ;
 					bullet.parent7 = this;
 					if(enemyLists.Count > 0){
 						curEnemy = enemyLists[0];

@@ -176,14 +176,8 @@ public class Cannon : Building {
 				Debug.Log ("22");
 				GameObject bulletgo = (GameObject)GameObject.Instantiate(Resources.Load("cannonbullet"));
 				CannonBullet bullet = bulletgo.GetComponent<CannonBullet>();
-				Transform gun =	GetTransform().GetChild(0);
-				
 				bulletgo.transform.position = GetTransform().position+GetTransform().forward * 0.6f;
-				//bulletgo.transform.position = gun.position ;
-				
 				bullet.parent = this;
-
-
 				curEnemy = EnemySpawnManager._instance.enemyList[0];
 
 				bullet.Fire(curEnemy);
